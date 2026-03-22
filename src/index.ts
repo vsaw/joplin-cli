@@ -12,12 +12,7 @@ dotenv.config({ quiet: true });
 const token = process.env.JOPLIN_API_TOKEN;
 const baseUrl = process.env.JOPLIN_BASE_URL || 'http://localhost:41184';
 
-if (!token) {
-  console.error('Error: JOPLIN_API_TOKEN environment variable is not set.');
-  process.exit(1);
-}
-
-const client = new JoplinClient(token, baseUrl);
+const client = new JoplinClient(token || '', baseUrl);
 
 yargs(hideBin(process.argv))
   .scriptName('joplin')
@@ -25,6 +20,11 @@ yargs(hideBin(process.argv))
   .option('sandbox', { alias: 's', type: 'boolean', default: false, describe: 'Run in sandbox mode (no changes will be made)' })
   .option('verbose', { alias: 'v', type: 'boolean', default: false, describe: 'Show debug information' })
   .middleware((argv) => {
+    // Check for token only if we're not just showing help or version
+    if (!argv.help && !argv.version && !token) {
+      console.error('Error: JOPLIN_API_TOKEN environment variable is not set.');
+      process.exit(1);
+    }
     client.setVerbose(argv.verbose as boolean);
   })
   
