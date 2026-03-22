@@ -1,0 +1,78 @@
+import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+
+export class JoplinClient {
+  private axiosInstance: AxiosInstance;
+  private token: string;
+  private verbose: boolean = false;
+
+  constructor(token: string, baseURL: string = 'http://localhost:41184') {
+    this.token = token;
+    this.axiosInstance = axios.create({
+      baseURL,
+    });
+
+    this.axiosInstance.interceptors.request.use((config) => {
+      if (this.verbose) {
+        console.error(`[VERBOSE] ${config.method?.toUpperCase()} ${axios.getUri(config)}`);
+        console.error(`[VERBOSE] PARAMS:`, JSON.stringify(config.params || {}, null, 2));
+        if (config.data) {
+          console.error('[VERBOSE] DATA:', JSON.stringify(config.data, null, 2));
+        }
+      }
+      return config;
+    });
+
+    this.axiosInstance.interceptors.response.use(
+      (response) => {
+        if (this.verbose) {
+          console.error(`[VERBOSE] RESPONSE ${response.status}:`, JSON.stringify(response.data, null, 2));
+        }
+        return response;
+      },
+      (error) => {
+        if (this.verbose) {
+          if (error.response) {
+            console.error(`[VERBOSE] RESPONSE ERROR ${error.response.status}:`, JSON.stringify(error.response.data, null, 2));
+          } else {
+            console.error('[VERBOSE] REQUEST ERROR:', error.message ? error.message : error);
+          }
+        }
+        return Promise.reject(error);
+      }
+    );
+  }
+
+  setVerbose(verbose: boolean) {
+    this.verbose = verbose;
+  }
+
+  private getConfig(config: AxiosRequestConfig = {}): AxiosRequestConfig {
+    return {
+      ...config,
+      params: {
+        token: this.token,
+        ...config.params,
+      },
+    };
+  }
+
+  async get<T = any>(url: string, config?: AxiosRequestConfig): Promise<T> {
+    const response = await this.axiosInstance.get<T>(url, this.getConfig(config));
+    return response.data;
+  }
+
+  async post<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
+    const response = await this.axiosInstance.post<T>(url, data, this.getConfig(config));
+    return response.data;
+  }
+
+  async put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
+    const response = await this.axiosInstance.put<T>(url, data, this.getConfig(config));
+    return response.data;
+  }
+
+  async delete<T = any>(url: string, config?: AxiosRequestConfig): Promise<T> {
+    const response = await this.axiosInstance.delete<T>(url, this.getConfig(config));
+    return response.data;
+  }
+}
