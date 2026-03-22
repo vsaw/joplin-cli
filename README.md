@@ -52,35 +52,30 @@ joplin ping
 
 Interact with notebooks (folders).
 
-#### List Notebooks
 List all notebooks.
 
 ```bash
 joplin notebook list
 ```
 
-#### Get Notebook
 Get details of a specific notebook by ID.
 
 ```bash
 joplin notebook get <id>
 ```
 
-#### Create Notebook
 Create a new notebook.
 
 ```bash
 joplin notebook create "My Notebook"
 ```
 
-#### Update Notebook
 Update a notebook's title.
 
 ```bash
 joplin notebook update <id> --title "New Title"
 ```
 
-#### Delete Notebook
 Delete a notebook.
 
 ```bash
@@ -91,7 +86,6 @@ joplin notebook delete <id>
 
 Interact with notes.
 
-#### List Notes
 List notes. Optionally filter by notebook.
 
 ```bash
@@ -99,28 +93,24 @@ joplin note list
 joplin note list --notebook <notebook_id>
 ```
 
-#### Get Note
 Get the content and metadata of a note.
 
 ```bash
 joplin note get <id>
 ```
 
-#### Create Note
 Create a new note.
 
 ```bash
 joplin note create "My Note Title" --notebook <notebook_id> --body "This is the note body"
 ```
 
-#### Update Note
 Update a note's title or body.
 
 ```bash
 joplin note update <id> --title "Updated Title" --body "Updated body content"
 ```
 
-#### Delete Note
 Delete a note.
 
 ```bash
