@@ -26,6 +26,12 @@ export JOPLIN_API_TOKEN=your_token_here
 # export JOPLIN_BASE_URL=http://localhost:41184
 ```
 
+Alternatively you can set it via an `.env` file
+
+```
+JOPLIN_API_TOKEN=your_token_here
+```
+
 ## Usage
 
 ```bash
