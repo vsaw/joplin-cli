@@ -75,7 +75,7 @@ describe('Notebook Commands', () => {
 
       expect(mockClient.get).toHaveBeenCalledWith('/search', {
         params: {
-          query: '"*Notebook 1*"',
+          query: '*Notebook 1*',
           type: 'folder',
         },
       });
