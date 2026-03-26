@@ -70,6 +70,18 @@ Get details of a specific notebook by ID.
 joplin notebook get <id>
 ```
 
+Search for notebooks by title. By default, it uses wildcards (e.g., `*query*`) for partial matching.
+
+```bash
+joplin notebook search "My Notebook"
+```
+
+Use the `--complex` (or `-c`) flag to use full Joplin search operators.
+
+```bash
+joplin notebook search "title:MyNotebook" --complex
+```
+
 Create a new notebook.
 
 ```bash

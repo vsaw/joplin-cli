@@ -2,7 +2,7 @@
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { JoplinClient } from './api/client';
-import { listNotebooks, getNotebook, createNotebook, updateNotebook, deleteNotebook } from './commands/notebooks';
+import { listNotebooks, getNotebook, createNotebook, updateNotebook, deleteNotebook, searchNotebooks } from './commands/notebooks';
 import { listNotes, getNote, createNote, updateNote, deleteNote } from './commands/notes';
 import { formatTable, formatNote, formatNotebook } from './utils/formatting';
 import * as dotenv from 'dotenv';
@@ -47,6 +47,20 @@ yargs(hideBin(process.argv))
           console.log(formatTable(['id', 'title'], notebooks));
         } catch (error: any) {
           console.error('Error listing notebooks:', error.message);
+        }
+      })
+      .command('search <query>', 'Search for notebooks by title', (yargs) => {
+        return yargs
+          .positional('query', { type: 'string', describe: 'Search query' })
+          .option('complex', { alias: 'c', type: 'boolean', default: false, describe: 'Use complex search operators' });
+      }, async (argv) => {
+        try {
+          console.debug('Search query:', argv.query);
+          console.debug('Complex search:', argv.complex);
+          const notebooks = await searchNotebooks(client, argv.query as string, argv.complex as boolean);
+          console.log(formatTable(['id', 'title'], notebooks));
+        } catch (error: any) {
+          console.error('Error searching notebooks:', error.message);
         }
       })
       .command('get <id>', 'Get a notebook', (yargs) => {

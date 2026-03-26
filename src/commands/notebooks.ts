@@ -26,3 +26,14 @@ export async function updateNotebook(client: JoplinClient, id: string, title: st
 export async function deleteNotebook(client: JoplinClient, id: string): Promise<void> {
   await client.delete(`/folders/${id}`);
 }
+
+export async function searchNotebooks(client: JoplinClient, query: string, complex: boolean = false): Promise<Notebook[]> {
+  const searchQuery = complex ? query : `*${query}*`;
+  const result = await client.get<{ items: Notebook[] }>('/search', {
+    params: {
+      query: searchQuery,
+      type: 'folder',
+    },
+  });
+  return result.items;
+}

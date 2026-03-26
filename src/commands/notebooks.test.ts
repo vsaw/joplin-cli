@@ -1,4 +1,4 @@
-import { listNotebooks, getNotebook, createNotebook, updateNotebook, deleteNotebook } from './notebooks';
+import { listNotebooks, getNotebook, createNotebook, updateNotebook, deleteNotebook, searchNotebooks } from './notebooks';
 import { JoplinClient } from '../api/client';
 
 // Mock the JoplinClient
@@ -64,6 +64,36 @@ describe('Notebook Commands', () => {
       await deleteNotebook(mockClient, '1');
       
       expect(mockClient.delete).toHaveBeenCalledWith('/folders/1');
+    });
+  });
+
+  describe('searchNotebooks', () => {
+    it('should call client.get with wildcard query by default', async () => {
+      mockClient.get.mockResolvedValue({ items: [{ id: '1', title: 'Notebook 1' }] });
+
+      const result = await searchNotebooks(mockClient, 'Notebook 1');
+
+      expect(mockClient.get).toHaveBeenCalledWith('/search', {
+        params: {
+          query: '"*Notebook 1*"',
+          type: 'folder',
+        },
+      });
+      expect(result).toEqual([{ id: '1', title: 'Notebook 1' }]);
+    });
+
+    it('should call client.get without wildcards when complex is true', async () => {
+      mockClient.get.mockResolvedValue({ items: [{ id: '1', title: 'Notebook 1' }] });
+
+      const result = await searchNotebooks(mockClient, 'title:Notebook 1', true);
+
+      expect(mockClient.get).toHaveBeenCalledWith('/search', {
+        params: {
+          query: 'title:Notebook 1',
+          type: 'folder',
+        },
+      });
+      expect(result).toEqual([{ id: '1', title: 'Notebook 1' }]);
     });
   });
 });
