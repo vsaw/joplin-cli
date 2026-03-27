@@ -1,4 +1,4 @@
-import { listNotes, getNote, createNote, updateNote, deleteNote } from './notes';
+import { listNotes, getNote, createNote, updateNote, deleteNote, searchNotes } from './notes';
 import { JoplinClient } from '../api/client';
 
 // Mock the JoplinClient
@@ -76,6 +76,34 @@ describe('Note Commands', () => {
       await deleteNote(mockClient, '1');
       
       expect(mockClient.delete).toHaveBeenCalledWith('/notes/1');
+    });
+  });
+
+  describe('searchNotes', () => {
+    it('should call client.get with wildcard query by default', async () => {
+      mockClient.get.mockResolvedValue({ items: [{ id: '1', title: 'Note 1' }] });
+      
+      const result = await searchNotes(mockClient, 'Note 1');
+      
+      expect(mockClient.get).toHaveBeenCalledWith('/search', {
+        params: {
+          query: 'type:note *Note 1*',
+        },
+      });
+      expect(result).toEqual([{ id: '1', title: 'Note 1' }]);
+    });
+
+    it('should call client.get without wildcards when complex is true', async () => {
+      mockClient.get.mockResolvedValue({ items: [{ id: '1', title: 'Note 1' }] });
+      
+      const result = await searchNotes(mockClient, 'title:Note 1', true);
+      
+      expect(mockClient.get).toHaveBeenCalledWith('/search', {
+        params: {
+          query: 'type:note title:Note 1',
+        },
+      });
+      expect(result).toEqual([{ id: '1', title: 'Note 1' }]);
     });
   });
 });

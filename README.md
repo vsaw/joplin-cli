@@ -47,6 +47,14 @@ Test the connection to the Joplin Data API.
 joplin ping
 ```
 
+#### Search
+Search for notes (alias for `joplin note search`).
+
+```bash
+joplin search "My Note"
+joplin search "title:MyNote" --complex
+```
+
 ### Global Options
 
 - `--help`: Show help
@@ -109,6 +117,18 @@ List notes. Optionally filter by notebook.
 ```bash
 joplin note list
 joplin note list --notebook <notebook_id>
+```
+
+Search for notes by title. By default, it uses wildcards (e.g., `*query*`) for partial matching.
+
+```bash
+joplin note search "My Note"
+```
+
+Use the `--complex` (or `-c`) flag to use full Joplin search operators.
+
+```bash
+joplin note search "title:MyNote" --complex
 ```
 
 Get the content and metadata of a note.

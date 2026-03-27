@@ -37,3 +37,13 @@ export async function updateNote(client: JoplinClient, id: string, updates: Part
 export async function deleteNote(client: JoplinClient, id: string): Promise<void> {
   await client.delete(`/notes/${id}`);
 }
+
+export async function searchNotes(client: JoplinClient, query: string, complex: boolean = false): Promise<Note[]> {
+  const searchQuery = complex ? query : `*${query}*`;
+  const result = await client.get<{ items: Note[] }>('/search', {
+    params: {
+      query: `type:note ${searchQuery}`,
+    },
+  });
+  return result.items;
+}

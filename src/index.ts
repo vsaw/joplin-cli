@@ -3,7 +3,7 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { JoplinClient } from './api/client';
 import { listNotebooks, getNotebook, createNotebook, updateNotebook, deleteNotebook, searchNotebooks } from './commands/notebooks';
-import { listNotes, getNote, createNote, updateNote, deleteNote } from './commands/notes';
+import { listNotes, getNote, createNote, updateNote, deleteNote, searchNotes } from './commands/notes';
 import { formatTable, formatNote, formatNotebook } from './utils/formatting';
 import * as dotenv from 'dotenv';
 
@@ -35,6 +35,18 @@ yargs(hideBin(process.argv))
       console.log(`Joplin Data API is reachable (Status: ${result})`);
     } catch (error: any) {
       console.error('Error connecting to Joplin Data API:', error.message);
+    }
+  })
+  .command('search <query>', 'Search for notes (Alias for note search)', (yargs) => {
+    return yargs
+      .positional('query', { type: 'string', describe: 'Search query' })
+      .option('complex', { alias: 'c', type: 'boolean', default: false, describe: 'Use complex search operators' });
+  }, async (argv) => {
+    try {
+      const notes = await searchNotes(client, argv.query as string, argv.complex as boolean);
+      console.log(formatTable(['id', 'title'], notes));
+    } catch (error: any) {
+      console.error('Error searching notes:', error.message);
     }
   })
 
@@ -130,6 +142,18 @@ yargs(hideBin(process.argv))
           console.log(formatTable(['id', 'title'], notes));
         } catch (error: any) {
           console.error('Error listing notes:', error.message);
+        }
+      })
+      .command('search <query>', 'Search for notes', (yargs) => {
+        return yargs
+          .positional('query', { type: 'string', describe: 'Search query' })
+          .option('complex', { alias: 'c', type: 'boolean', default: false, describe: 'Use complex search operators' });
+      }, async (argv) => {
+        try {
+          const notes = await searchNotes(client, argv.query as string, argv.complex as boolean);
+          console.log(formatTable(['id', 'title'], notes));
+        } catch (error: any) {
+          console.error('Error searching notes:', error.message);
         }
       })
       .command('get <id>', 'Get a note', (yargs) => {
