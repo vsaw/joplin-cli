@@ -18,7 +18,16 @@ npm install -g joplin-cli
 
 ## Configuration
 
-Set the `JOPLIN_API_TOKEN` environment variable:
+The following configuration options are evailable
+
+| NAME | REQUIRED | DESCRIPTION |
+|--|--|--|
+| `JOPLIN_API_TOKEN`<br><br>`--joplin-api-token` | Yes | The required token to connect to the Webclipper API. You can obtain it in the Joplin App settings. For more information see the [Joplin Documentation](https://joplinapp.org/help/api/references/rest_api#authorisation). |
+| `JOPLIN_BASE_URL`<br><br>`--joplin-base-url` | No | If not provided http://localhost:41184 will be used as default value. |
+
+The configuration values can be passed via the CLI interface or as environmental variables
+
+For example by adding these lines to your `.bashrc` file
 
 ```bash
 export JOPLIN_API_TOKEN=your_token_here

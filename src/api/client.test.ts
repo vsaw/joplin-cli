@@ -16,6 +16,7 @@ describe('JoplinClient', () => {
       post: jest.fn(),
       put: jest.fn(),
       delete: jest.fn(),
+      defaults: { baseURL: '' },
       interceptors: {
         request: { use: jest.fn() },
         response: { use: jest.fn() },
@@ -36,6 +37,24 @@ describe('JoplinClient', () => {
         params: { token },
       });
     });
+
+    it('should allow setting a new token', async () => {
+      const newToken = 'new-test-token';
+      client.setToken(newToken);
+      mockInstance.get.mockResolvedValue({ data: { items: [] } });
+
+      await client.get('/folders');
+
+      expect(mockInstance.get).toHaveBeenCalledWith('/folders', {
+        params: { token: newToken },
+      });
+    });
+
+    it('should allow setting a new base URL', async () => {
+        const newBaseUrl = 'http://remote-joplin:41184';
+        client.setBaseUrl(newBaseUrl);
+        expect(mockInstance.defaults.baseURL).toBe(newBaseUrl);
+      });
 
     it('should make a POST request with the correct token and data', async () => {
       const data = { title: 'New Notebook' };

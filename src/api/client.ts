@@ -46,6 +46,14 @@ export class JoplinClient {
     this.verbose = verbose;
   }
 
+  setToken(token: string) {
+    this.token = token;
+  }
+
+  setBaseUrl(baseUrl: string) {
+    this.axiosInstance.defaults.baseURL = baseUrl;
+  }
+
   private getConfig(config: AxiosRequestConfig = {}): AxiosRequestConfig {
     return {
       ...config,
