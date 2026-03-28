@@ -48,7 +48,7 @@ export JOPLIN_API_TOKEN=your_token_here
 
 Alternatively you can set it via an `.env` file
 
-```
+```env
 JOPLIN_API_TOKEN=your_token_here
 ```
 

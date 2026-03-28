@@ -11,7 +11,8 @@
   ],
   "scripts": {
     "test": "jest",
-    "build": "tsc"
+    "build": "tsc",
+    "lint": "npx eslint ."
   },
   "repository": {
     "type": "git",
@@ -33,12 +34,19 @@
     "yargs": "^18.0.0"
   },
   "devDependencies": {
+    "@eslint/create-config": "^1.11.0",
+    "@eslint/js": "^10.0.1",
+    "@eslint/json": "^1.2.0",
+    "@eslint/markdown": "^8.0.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^25.5.0",
     "@types/yargs": "^17.0.35",
     "eslint": "^10.1.0",
+    "globals": "^17.4.0",
     "jest": "^30.3.0",
+    "jiti": "^2.6.1",
     "prettier": "^3.8.1",
-    "ts-jest": "^29.4.6"
+    "ts-jest": "^29.4.6",
+    "typescript-eslint": "^8.57.2"
   }
 }

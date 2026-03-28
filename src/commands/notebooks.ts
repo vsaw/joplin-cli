@@ -3,7 +3,7 @@ import { JoplinClient } from '../api/client';
 export interface Notebook {
   id: string;
   title: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export async function listNotebooks(client: JoplinClient): Promise<Notebook[]> {

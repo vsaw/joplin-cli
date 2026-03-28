@@ -10,7 +10,7 @@ describe('Note Commands', () => {
   beforeEach(() => {
     // Clear all mocks
     jest.clearAllMocks();
-    mockClient = new JoplinClient('token', 'url') as any;
+    mockClient = new JoplinClient('token', 'url') as unknown as jest.Mocked<JoplinClient>;
   });
 
   describe('listNotes', () => {

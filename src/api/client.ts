@@ -70,22 +70,22 @@ export class JoplinClient {
     };
   }
 
-  async get<T = any>(url: string, config?: AxiosRequestConfig): Promise<T> {
+  async get<T = unknown>(url: string, config?: AxiosRequestConfig): Promise<T> {
     const response = await this.axiosInstance.get<T>(url, this.getConfig(config));
     return response.data;
   }
 
-  async post<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
+  async post<T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> {
     const response = await this.axiosInstance.post<T>(url, data, this.getConfig(config));
     return response.data;
   }
 
-  async put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
+  async put<T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> {
     const response = await this.axiosInstance.put<T>(url, data, this.getConfig(config));
     return response.data;
   }
 
-  async delete<T = any>(url: string, config?: AxiosRequestConfig): Promise<T> {
+  async delete<T = unknown>(url: string, config?: AxiosRequestConfig): Promise<T> {
     const response = await this.axiosInstance.delete<T>(url, this.getConfig(config));
     return response.data;
   }

@@ -39,8 +39,8 @@ yargs(hideBin(process.argv))
     try {
       const result = await client.get('/ping');
       console.log(`Joplin Data API is reachable (Status: ${result})`);
-    } catch (error: any) {
-      console.error('Error connecting to Joplin Data API:', error.message);
+    } catch (error: unknown) {
+      console.error('Error connecting to Joplin Data API:', error instanceof Error ? error.message : String(error));
     }
   })
   .command('search <query>', 'Search for notes (Alias for note search)', (yargs) => {
@@ -51,8 +51,8 @@ yargs(hideBin(process.argv))
     try {
       const notes = await searchNotes(client, argv.query as string, argv.complex as boolean);
       console.log(formatTable(['id', 'title'], notes));
-    } catch (error: any) {
-      console.error('Error searching notes:', error.message);
+    } catch (error: unknown) {
+      console.error('Error searching notes:', error instanceof Error ? error.message : String(error));
     }
   })
 
@@ -63,8 +63,8 @@ yargs(hideBin(process.argv))
         try {
           const notebooks = await listNotebooks(client);
           console.log(formatTable(['id', 'title'], notebooks));
-        } catch (error: any) {
-          console.error('Error listing notebooks:', error.message);
+        } catch (error: unknown) {
+          console.error('Error listing notebooks:', error instanceof Error ? error.message : String(error));
         }
       })
       .command('search <query>', 'Search for notebooks by title', (yargs) => {
@@ -77,8 +77,8 @@ yargs(hideBin(process.argv))
           console.debug('Complex search:', argv.complex);
           const notebooks = await searchNotebooks(client, argv.query as string, argv.complex as boolean);
           console.log(formatTable(['id', 'title'], notebooks));
-        } catch (error: any) {
-          console.error('Error searching notebooks:', error.message);
+        } catch (error: unknown) {
+          console.error('Error searching notebooks:', error instanceof Error ? error.message : String(error));
         }
       })
       .command('get <id>', 'Get a notebook', (yargs) => {
@@ -87,8 +87,8 @@ yargs(hideBin(process.argv))
         try {
           const notebook = await getNotebook(client, argv.id as string);
           console.log(formatNotebook(notebook));
-        } catch (error: any) {
-          console.error(`Error getting notebook ${argv.id}:`, error.message);
+        } catch (error: unknown) {
+          console.error(`Error getting notebook ${argv.id}:`, error instanceof Error ? error.message : String(error));
         }
       })
       .command('create <title>', 'Create a notebook', (yargs) => {
@@ -101,8 +101,8 @@ yargs(hideBin(process.argv))
         try {
           const notebook = await createNotebook(client, argv.title as string);
           console.log('Notebook created:', notebook.id);
-        } catch (error: any) {
-          console.error('Error creating notebook:', error.message);
+        } catch (error: unknown) {
+          console.error('Error creating notebook:', error instanceof Error ? error.message : String(error));
         }
       })
       .command('update <id>', 'Update a notebook', (yargs) => {
@@ -117,8 +117,8 @@ yargs(hideBin(process.argv))
         try {
           const notebook = await updateNotebook(client, argv.id as string, argv.title as string);
           console.log('Notebook updated:', notebook.id);
-        } catch (error: any) {
-          console.error(`Error updating notebook ${argv.id}:`, error.message);
+        } catch (error: unknown) {
+          console.error(`Error updating notebook ${argv.id}:`, error instanceof Error ? error.message : String(error));
         }
       })
       .command('delete <id>', 'Delete a notebook', (yargs) => {
@@ -131,8 +131,8 @@ yargs(hideBin(process.argv))
         try {
           await deleteNotebook(client, argv.id as string);
           console.log(`Notebook ${argv.id} deleted.`);
-        } catch (error: any) {
-          console.error(`Error deleting notebook ${argv.id}:`, error.message);
+        } catch (error: unknown) {
+          console.error(`Error deleting notebook ${argv.id}:`, error instanceof Error ? error.message : String(error));
         }
       });
   })
@@ -146,8 +146,8 @@ yargs(hideBin(process.argv))
         try {
           const notes = await listNotes(client, argv.notebook as string);
           console.log(formatTable(['id', 'title'], notes));
-        } catch (error: any) {
-          console.error('Error listing notes:', error.message);
+        } catch (error: unknown) {
+          console.error('Error listing notes:', error instanceof Error ? error.message : String(error));
         }
       })
       .command('search <query>', 'Search for notes', (yargs) => {
@@ -158,8 +158,8 @@ yargs(hideBin(process.argv))
         try {
           const notes = await searchNotes(client, argv.query as string, argv.complex as boolean);
           console.log(formatTable(['id', 'title'], notes));
-        } catch (error: any) {
-          console.error('Error searching notes:', error.message);
+        } catch (error: unknown) {
+          console.error('Error searching notes:', error instanceof Error ? error.message : String(error));
         }
       })
       .command('get <id>', 'Get a note', (yargs) => {
@@ -168,8 +168,8 @@ yargs(hideBin(process.argv))
         try {
           const note = await getNote(client, argv.id as string);
           console.log(formatNote(note));
-        } catch (error: any) {
-          console.error(`Error getting note ${argv.id}:`, error.message);
+        } catch (error: unknown) {
+          console.error(`Error getting note ${argv.id}:`, error instanceof Error ? error.message : String(error));
         }
       })
       .command('create <title>', 'Create a note', (yargs) => {
@@ -185,8 +185,8 @@ yargs(hideBin(process.argv))
         try {
           const note = await createNote(client, argv.title as string, argv.body as string, argv.notebook as string);
           console.log('Note created:', note.id);
-        } catch (error: any) {
-          console.error('Error creating note:', error.message);
+        } catch (error: unknown) {
+          console.error('Error creating note:', error instanceof Error ? error.message : String(error));
         }
       })
       .command('update <id>', 'Update a note', (yargs) => {
@@ -200,9 +200,9 @@ yargs(hideBin(process.argv))
           return;
         }
         try {
-          const updates: any = {};
-          if (argv.title) updates.title = argv.title;
-          if (argv.body) updates.body = argv.body;
+          const updates: { title?: string; body?: string } = {};
+          if (argv.title) updates.title = argv.title as string;
+          if (argv.body) updates.body = argv.body as string;
           
           if (Object.keys(updates).length === 0) {
             console.warn('No updates provided.');
@@ -211,8 +211,8 @@ yargs(hideBin(process.argv))
 
           const note = await updateNote(client, argv.id as string, updates);
           console.log('Note updated:', note.id);
-        } catch (error: any) {
-          console.error(`Error updating note ${argv.id}:`, error.message);
+        } catch (error: unknown) {
+          console.error(`Error updating note ${argv.id}:`, error instanceof Error ? error.message : String(error));
         }
       })
       .command('delete <id>', 'Delete a note', (yargs) => {
@@ -225,8 +225,8 @@ yargs(hideBin(process.argv))
         try {
           await deleteNote(client, argv.id as string);
           console.log(`Note ${argv.id} deleted.`);
-        } catch (error: any) {
-          console.error(`Error deleting note ${argv.id}:`, error.message);
+        } catch (error: unknown) {
+          console.error(`Error deleting note ${argv.id}:`, error instanceof Error ? error.message : String(error));
         }
       });
   })
