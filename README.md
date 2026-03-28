@@ -2,12 +2,14 @@
 
 A command-line interface for interacting with the Joplin Data API.
 
-Compared to the [Joplin Terminal Application](https://joplinapp.org/help/apps/terminal) this CLI is a thin wrapper of the [Joplin Data API](https://joplinapp.org/help/api/references/rest_api). 
-It was primarily written to provide a lean alternative over MCP Servers. Benefits over other MCP Servers are
+Compared to the [Joplin Terminal Application](https://joplinapp.org/help/apps/terminal) this CLI is a thin wrapper of the [Joplin Data API](https://joplinapp.org/help/api/references/rest_api).
+It was primarily written to provide a lean alternative over MCP Servers.
+Benefits of `joplin-cli` over other MCP Servers are
 
 - **Leaner Code Base** The entire code base is <1k SLOC including tests.
 - **Increased Security** Other than MCP Servers this does not depend on any incoming HTTP connection and runs entirely in your command line.
-- **Less Token Usage** CLI usage requires much less Context window compared to MCP. Wath the [The Pragmatic Engineer interview with Peter Steinberger, creator of Clawdbot and OpenClaw](https://www.youtube.com/watch?v=8lF7HmQ_RgY&t=4908s) or read the excerpt below for more detailed explanation.
+- **Less Token Usage** CLI usage requires much less Context window compared to MCP.
+  Watch the [The Pragmatic Engineer interview with Peter Steinberger, creator of Clawdbot and OpenClaw](https://www.youtube.com/watch?v=8lF7HmQ_RgY&t=4908s) or read the excerpt below for more detailed explanation.
 
     > *Q: In order for this (OpenClaw) to work you want everything to be a CLI. Why CLIs and not MCPs?*
     >
@@ -53,7 +55,7 @@ JOPLIN_API_TOKEN=your_token_here
 ## Usage
 
 ```bash
-joplin <command> [options]
+joplin-cli <command> [options]
 ```
 
 ### General Commands
@@ -62,15 +64,15 @@ joplin <command> [options]
 Test the connection to the Joplin Data API.
 
 ```bash
-joplin ping
+joplin-cli ping
 ```
 
 #### Search
-Search for notes (alias for `joplin note search`).
+Search for notes (alias for `joplin-cli note search`).
 
 ```bash
-joplin search "My Note"
-joplin search "title:MyNote" --complex
+joplin-cli search "My Note"
+joplin-cli search "title:MyNote" --complex
 ```
 
 ### Global Options
@@ -87,43 +89,43 @@ Interact with notebooks (folders).
 List all notebooks.
 
 ```bash
-joplin notebook list
+joplin-cli notebook list
 ```
 
 Get details of a specific notebook by ID.
 
 ```bash
-joplin notebook get <id>
+joplin-cli notebook get <id>
 ```
 
 Search for notebooks by title. By default, it uses wildcards (e.g., `*query*`) for partial matching.
 
 ```bash
-joplin notebook search "My Notebook"
+joplin-cli notebook search "My Notebook"
 ```
 
-Use the `--complex` (or `-c`) flag to use full Joplin search operators.
+Use the `--complex` (or `-c`) flag to use full [Joplin search operators](https://joplinapp.org/help/apps/search).
 
 ```bash
-joplin notebook search "title:MyNotebook" --complex
+joplin-cli notebook search "title:MyNotebook" --complex
 ```
 
 Create a new notebook.
 
 ```bash
-joplin notebook create "My Notebook"
+joplin-cli notebook create "My Notebook"
 ```
 
 Update a notebook's title.
 
 ```bash
-joplin notebook update <id> --title "New Title"
+joplin-cli notebook update <id> --title "New Title"
 ```
 
 Delete a notebook.
 
 ```bash
-joplin notebook delete <id>
+joplin-cli notebook delete <id>
 ```
 
 ### Note Commands
@@ -133,44 +135,44 @@ Interact with notes.
 List notes. Optionally filter by notebook.
 
 ```bash
-joplin note list
-joplin note list --notebook <notebook_id>
+joplin-cli note list
+joplin-cli note list --notebook <notebook_id>
 ```
 
 Search for notes by title. By default, it uses wildcards (e.g., `*query*`) for partial matching.
 
 ```bash
-joplin note search "My Note"
+joplin-cli note search "My Note"
 ```
 
 Use the `--complex` (or `-c`) flag to use full Joplin search operators.
 
 ```bash
-joplin note search "title:MyNote" --complex
+joplin-cli note search "title:MyNote" --complex
 ```
 
 Get the content and metadata of a note.
 
 ```bash
-joplin note get <id>
+joplin-cli note get <id>
 ```
 
 Create a new note.
 
 ```bash
-joplin note create "My Note Title" --notebook <notebook_id> --body "This is the note body"
+joplin-cli note create "My Note Title" --notebook <notebook_id> --body "This is the note body"
 ```
 
 Update a note's title or body.
 
 ```bash
-joplin note update <id> --title "Updated Title" --body "Updated body content"
+joplin-cli note update <id> --title "Updated Title" --body "Updated body content"
 ```
 
 Delete a note.
 
 ```bash
-joplin note delete <id>
+joplin-cli note delete <id>
 ```
 
 ## Development
