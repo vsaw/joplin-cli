@@ -24,7 +24,7 @@ Benefits of `joplin-cli` over other MCP Servers are
 ## Installation
 
 ```bash
-npm install -g joplin-cli
+npm install -g github:vsaw/joplin-cli
 ```
 
 ## Configuration
