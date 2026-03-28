@@ -1,4 +1,6 @@
 import { formatTable, formatNote, formatNotebook } from './formatting';
+import { Note } from '../commands/notes';
+import { Notebook } from '../commands/notebooks';
 
 describe('Formatting Utilities', () => {
   describe('formatTable', () => {
@@ -21,8 +23,13 @@ describe('Formatting Utilities', () => {
 
     it('should handle missing properties gracefully', () => {
       const headers = ['id', 'title'];
-      const rows = [
-        { id: '1' }, // Missing title
+      const rows: Note[] = [
+        {
+          id: '1',
+          title: '',
+          body: '',
+          parent_id: ''
+        }, // Missing title
       ];
       const expected = `| id | title |
 | --- | --- |
@@ -33,19 +40,31 @@ describe('Formatting Utilities', () => {
 
   describe('formatNote', () => {
     it('should format a note with title and body', () => {
-      const note = { title: 'My Note', body: 'This is the body.' };
+      const note: Note = {
+        title: 'My Note', body: 'This is the body.',
+        id: '',
+        parent_id: ''
+      };
       expect(formatNote(note)).toBe('# My Note\n\nThis is the body.');
     });
 
     it('should format a note without body', () => {
-      const note = { title: 'My Note' };
+      const note: Note = {
+        title: 'My Note',
+        body: '',
+        id: '',
+        parent_id: ''
+      };
       expect(formatNote(note)).toBe('# My Note\n\n');
     });
   });
 
   describe('formatNotebook', () => {
     it('should format a notebook title', () => {
-      const notebook = { title: 'My Notebook' };
+      const notebook: Notebook = {
+        title: 'My Notebook',
+        id: ''
+      };
       expect(formatNotebook(notebook)).toBe('# My Notebook');
     });
   });
