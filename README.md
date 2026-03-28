@@ -4,9 +4,19 @@ A command-line interface for interacting with the Joplin Data API.
 
 Compared to the [Joplin Terminal Application](https://joplinapp.org/help/apps/terminal) this CLI is a thin wrapper of the [Joplin Data API](https://joplinapp.org/help/api/references/rest_api).
 
+It was primarily written to provide a lean alternative over MCP Servers. Benefits over other MCP Servers are
+
+- **Leaner Code Base** The entire code base is <1k SLOC including tests.
+- **Increased Security** Other than MCP Servers this does not depend on any incoming HTTP connection and runs entirely in your command line.
+- **Less Token Usage** See for example watch the [The Pragmatic Engineer interview with Peter Steinberger, creator of Clawdbot and OpenClaw](https://www.youtube.com/watch?v=8lF7HmQ_RgY&t=4908s)
+
+    > *Q: In order for this (OpenClaw) to work you want everything to be a CLI. Why CLIs and not MCPs?*
+    >
+    > A: MCP is a crutch. The best thing that came out of MCP is it made companies rethink to open up more APIs. The whole concept is silly. You have to pre export all the functions of all the tools and all the explanations when your tool loads. And then the model has to send a precise blob of JSON there and gets JSON back. But surprise, models are really good at using bash. Imagine you have a weather service and the model could ask for a list of available cities and get like 500 cities back, and then it picks one city out of that list but it cannot filter that list because that’s not part of how MCP works … and you’d say okay give me the weather for London. And you’d get weather forecast, temperature, wind… and 50 other things I don’t care about because I just want to know "is it raining or not? "But the model needs to digest everything and then you have so much crap in your context.  Whereas if it’s a CLI I could filter for exactly what it needs.  Companies are solving for this but it doesn’t solve the problem that I cannot chain them. I cannot easily build a script that says hey give me all the cities that are over 25 degrees and then filter out only that part of information and pack it in one command. It’s all individual MCP calls I cannot script it.
+
 ## Prerequisites
 
-- [Joplin](https://joplinapp.org/) running locally.
+- [Joplin](https://joplinapp.org/) running.
 - Joplin Web Clipper (API) enabled.
 - API Token obtained from Joplin (Tools > Options > Web Clipper).
 
