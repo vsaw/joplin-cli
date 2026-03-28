@@ -2,13 +2,12 @@
 
 A command-line interface for interacting with the Joplin Data API.
 
-Compared to the [Joplin Terminal Application](https://joplinapp.org/help/apps/terminal) this CLI is a thin wrapper of the [Joplin Data API](https://joplinapp.org/help/api/references/rest_api).
-
+Compared to the [Joplin Terminal Application](https://joplinapp.org/help/apps/terminal) this CLI is a thin wrapper of the [Joplin Data API](https://joplinapp.org/help/api/references/rest_api). 
 It was primarily written to provide a lean alternative over MCP Servers. Benefits over other MCP Servers are
 
 - **Leaner Code Base** The entire code base is <1k SLOC including tests.
 - **Increased Security** Other than MCP Servers this does not depend on any incoming HTTP connection and runs entirely in your command line.
-- **Less Token Usage** See for example watch the [The Pragmatic Engineer interview with Peter Steinberger, creator of Clawdbot and OpenClaw](https://www.youtube.com/watch?v=8lF7HmQ_RgY&t=4908s)
+- **Less Token Usage** CLI usage requires much less Context window compared to MCP. Wath the [The Pragmatic Engineer interview with Peter Steinberger, creator of Clawdbot and OpenClaw](https://www.youtube.com/watch?v=8lF7HmQ_RgY&t=4908s) or read the excerpt below for more detailed explanation.
 
     > *Q: In order for this (OpenClaw) to work you want everything to be a CLI. Why CLIs and not MCPs?*
     >
