@@ -38,7 +38,7 @@ export class JoplinClient {
           }
         }
         if (error.code === 'ECONNREFUSED') {
-          return Promise.reject(new Error(`Failed to connect to Joplin API at ${this.axiosInstance.defaults.baseURL}. Please ensure the Joplin desktop application is running and the API is enabled.`));
+          return Promise.reject(new Error(`Failed to connect to Joplin API at ${this.axiosInstance.defaults.baseURL}. Please ensure the Joplin is running and the Web Clipper API is enabled.`));
         } else if (error.response.status === 403) {
           return Promise.reject(new Error('Invalid Joplin API token. Please check your token and try again.'));
         } else {

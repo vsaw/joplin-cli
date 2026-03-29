@@ -6,7 +6,7 @@ Compared to the [Joplin Terminal Application](https://joplinapp.org/help/apps/te
 It was primarily written to provide a lean alternative over MCP Servers.
 Benefits of `joplin-cli` over other MCP Servers are
 
-- **Leaner Code Base** The entire code base is <1k SLOC including tests.
+- **Leaner Code Base** The entire code base is ~500 SLOC including tests.
 - **Increased Security** Other than MCP Servers this does not depend on any incoming HTTP connection and runs entirely in your command line.
 - **Less Token Usage** CLI usage requires much less Context window compared to MCP.
   Watch the [The Pragmatic Engineer interview with Peter Steinberger, creator of Clawdbot and OpenClaw](https://www.youtube.com/watch?v=8lF7HmQ_RgY&t=4908s) or read the excerpt below for more detailed explanation.
@@ -58,121 +58,104 @@ JOPLIN_API_TOKEN=your_token_here
 joplin-cli <command> [options]
 ```
 
-### General Commands
-
-#### Ping
-Test the connection to the Joplin Data API.
-
-```bash
-joplin-cli ping
-```
-
-#### Search
-Search for notes (alias for `joplin-cli note search`).
-
-```bash
-joplin-cli search "My Note"
-joplin-cli search "title:MyNote" --complex
-```
-
-### Global Options
+The following are global options that can be added to any command.
 
 - `--help`: Show help
 - `--version`: Show version number
 - `--sandbox`, `-s`: Run in sandbox mode (no changes will be made to Joplin data)
-- `--verbose`, `-v`: Show debug information (requests/responses)
+- `--verbose`, `-v`: Show debug information (requests/responses).
+  WARNING: This will show your `JOPLIN_API_TOKEN`.
 
-### Notebook Commands
+### Quickstart
 
-Interact with notebooks (folders).
+For a full list of option you can use `--help` at any point, e.g. to learn more about updating notes use `joplin-cli note update --help`.
 
-List all notebooks.
+### Working with notes
 
 ```bash
-joplin-cli notebook list
+# Search for all Notes containing "joplin" in title or body
+$ joplin-cli note search "joplin"
+
+# Search for all Notes with exact title "MyNote", created in the last two days
+# See Joplin Search Syntax for how to use complex queries.
+$ joplin-cli note search "title:MyNote created:day-2" --complex
+
+# List all notes
+$ joplin-cli note list [--notebook <Notebook ID>]
+
+# Get Note content
+$ joplin-cli note get <ID>
+
+# Create a new Note in specified Notebook
+# If Body is ommited, an empty note will be created.
+$ joplin-cli note create "Title" --notebook <Notebook ID> [--body <Body>]
+
+# Update a note
+# Either --title or --body must be present. Updates will overwrit existing note content
+$ joplin-cli note update update [--title <New Title>] [--body <New Body>]
+
+# Delete a note
+$ joplin-cli note delete <id>
 ```
 
-Get details of a specific notebook by ID.
+### Working with Notebooks
 
 ```bash
-joplin-cli notebook get <id>
+# Search for all Notes containing "joplin" in title or body
+$ joplin-cli notebook search "joplin"
+
+# Search for all Notes with exact title "MyNote", created in the last two days
+# See Joplin Search Syntax for how to use complex queries.
+$ joplin-cli notebook search "title:MyNote created:day-2" --complex
+
+# List all Notebooks
+$ joplin-cli notebook list
+
+# Create a new Notebook
+$ joplin-cli notebook create "My Notebook"
+
+# Update a Notebook Title
+$ joplin-cli notebook update <id> --title <New Title>
+
+# Delete a Notebook and all Notes it contains
+$ joplin-cli notebook delete <id>
 ```
 
-Search for notebooks by title. By default, it uses wildcards (e.g., `*query*`) for partial matching.
+### Troubleshooting
+
+To test if `joplin-cli` can reach Joplin at `JOPLIN_BASE_URL` you can use the `ping` command.
 
 ```bash
-joplin-cli notebook search "My Notebook"
+$ joplin-cli ping
+Joplin Data API is reachable (Status: JoplinClipperServer)
+
+OR
+
+Error connecting to Joplin Data API: Failed to connect to Joplin API at http://localhost:123. Please ensure the Joplin is running and the Web Clipper API is enabled.
 ```
 
-Use the `--complex` (or `-c`) flag to use full [Joplin search operators](https://joplinapp.org/help/apps/search).
+To test and debug if the API Token was correctly set use `note list --verbose`.
 
 ```bash
-joplin-cli notebook search "title:MyNotebook" --complex
-```
+# List all Notes and show debug information on the Joplin Data API request and response
+$ joplin-cli note list --verbose
 
-Create a new notebook.
-
-```bash
-joplin-cli notebook create "My Notebook"
-```
-
-Update a notebook's title.
-
-```bash
-joplin-cli notebook update <id> --title "New Title"
-```
-
-Delete a notebook.
-
-```bash
-joplin-cli notebook delete <id>
-```
-
-### Note Commands
-
-Interact with notes.
-
-List notes. Optionally filter by notebook.
-
-```bash
-joplin-cli note list
-joplin-cli note list --notebook <notebook_id>
-```
-
-Search for notes by title. By default, it uses wildcards (e.g., `*query*`) for partial matching.
-
-```bash
-joplin-cli note search "My Note"
-```
-
-Use the `--complex` (or `-c`) flag to use full Joplin search operators.
-
-```bash
-joplin-cli note search "title:MyNote" --complex
-```
-
-Get the content and metadata of a note.
-
-```bash
-joplin-cli note get <id>
-```
-
-Create a new note.
-
-```bash
-joplin-cli note create "My Note Title" --notebook <notebook_id> --body "This is the note body"
-```
-
-Update a note's title or body.
-
-```bash
-joplin-cli note update <id> --title "Updated Title" --body "Updated body content"
-```
-
-Delete a note.
-
-```bash
-joplin-cli note delete <id>
+[VERBOSE] GET http://localhost:41184/notes?token=XXxxXXxxXXxxXXxxXX
+[VERBOSE] PARAMS: {
+  "token": "XXxxXXxxXXxxXXxxXX"
+}
+[VERBOSE] RESPONSE 200: {
+  "items": [
+    {
+      "id": "edba4925cf86485588209bd1f2302ded",
+      "parent_id": "c1d874c248034e41ac9f8477359c0b6f",
+      "title": "My Note",
+      "deleted_time": 0
+    },
+    ...
+| id | title |
+| --- | --- |
+| edba4925cf86485588209bd1f2302ded | My Note |
 ```
 
 ## Development
