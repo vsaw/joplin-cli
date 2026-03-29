@@ -5,7 +5,7 @@ export interface Note {
   title: string;
   body: string;
   parent_id: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export async function listNotes(client: JoplinClient, notebookId?: string): Promise<Note[]> {

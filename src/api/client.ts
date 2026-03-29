@@ -37,7 +37,13 @@ export class JoplinClient {
             console.error('[VERBOSE] REQUEST ERROR:', error.message ? error.message : error);
           }
         }
-        return Promise.reject(error);
+        if (error.code === 'ECONNREFUSED') {
+          return Promise.reject(new Error(`Failed to connect to Joplin API at ${this.axiosInstance.defaults.baseURL}. Please ensure the Joplin is running and the Web Clipper API is enabled.`));
+        } else if (error.response.status === 403) {
+          return Promise.reject(new Error('Invalid Joplin API token. Please check your token and try again.'));
+        } else {
+          return Promise.reject(error);
+        }
       }
     );
   }
@@ -64,22 +70,22 @@ export class JoplinClient {
     };
   }
 
-  async get<T = any>(url: string, config?: AxiosRequestConfig): Promise<T> {
+  async get<T = unknown>(url: string, config?: AxiosRequestConfig): Promise<T> {
     const response = await this.axiosInstance.get<T>(url, this.getConfig(config));
     return response.data;
   }
 
-  async post<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
+  async post<T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> {
     const response = await this.axiosInstance.post<T>(url, data, this.getConfig(config));
     return response.data;
   }
 
-  async put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
+  async put<T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> {
     const response = await this.axiosInstance.put<T>(url, data, this.getConfig(config));
     return response.data;
   }
 
-  async delete<T = any>(url: string, config?: AxiosRequestConfig): Promise<T> {
+  async delete<T = unknown>(url: string, config?: AxiosRequestConfig): Promise<T> {
     const response = await this.axiosInstance.delete<T>(url, this.getConfig(config));
     return response.data;
   }

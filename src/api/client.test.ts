@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import { JoplinClient } from './client';
 
 jest.mock('axios');
@@ -8,21 +8,11 @@ describe('JoplinClient', () => {
   const token = 'test-token';
   const baseUrl = 'http://localhost:41184';
   let client: JoplinClient;
-  let mockInstance: any;
+  let mockInstance: jest.Mocked<AxiosInstance>;
 
   beforeEach(() => {
-    mockInstance = {
-      get: jest.fn(),
-      post: jest.fn(),
-      put: jest.fn(),
-      delete: jest.fn(),
-      defaults: { baseURL: '' },
-      interceptors: {
-        request: { use: jest.fn() },
-        response: { use: jest.fn() },
-      },
-    };
-    mockedAxios.create.mockReturnValue(mockInstance);
+    mockInstance = axios as jest.Mocked<typeof axios>;
+    mockedAxios.create.mockReturnValue(mockInstance as AxiosInstance);
     client = new JoplinClient(token, baseUrl);
     jest.clearAllMocks();
   });
