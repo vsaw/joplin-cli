@@ -92,7 +92,7 @@ $ joplin-cli note create "Title" --notebook <Notebook ID> [--body <Body>]
 
 # Update a note
 # Either --title or --body must be present. Updates will overwrit existing note content
-$ joplin-cli note update update [--title <New Title>] [--body <New Body>]
+$ joplin-cli note update [--title <New Title>] [--body <New Body>]
 
 # Delete a note
 $ joplin-cli note delete <id>
