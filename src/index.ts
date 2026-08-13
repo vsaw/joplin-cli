@@ -5,6 +5,7 @@ import { JoplinClient } from './api/client';
 import { listNotebooks, getNotebook, createNotebook, updateNotebook, deleteNotebook, searchNotebooks } from './commands/notebooks';
 import { listNotes, getNote, createNote, updateNote, deleteNote, searchNotes } from './commands/notes';
 import { formatTable, formatNote, formatNotebook } from './utils/formatting';
+import { resolveConfig, maskToken, desktopSettingsPath } from './utils/config';
 import * as dotenv from 'dotenv';
 
 dotenv.config({ quiet: true });
@@ -19,12 +20,11 @@ yargs(hideBin(process.argv))
   .option('sandbox', { alias: 's', type: 'boolean', default: false, describe: 'Run in sandbox mode (no changes will be made)' })
   .option('verbose', { alias: 'v', type: 'boolean', default: false, describe: 'Show debug information' })
   .middleware((argv) => {
-    const token = (argv['joplin-api-token'] as string) || process.env.JOPLIN_API_TOKEN;
-    const baseUrl = (argv['joplin-base-url'] as string) || process.env.JOPLIN_BASE_URL || 'http://localhost:41184';
+    const { token, baseUrl } = resolveConfig(argv);
 
-    // Check for token only if we're not just showing help or version
-    if (!argv.help && !argv.version && !token) {
-      console.error('Error: JOPLIN_API_TOKEN environment variable is not set and no --joplin-api-token argument provided.');
+    // A token isn't required to show help/version or to run `config` (which reports config state).
+    if (!argv.help && !argv.version && !argv._.includes('config') && !token) {
+      console.error('Error: No Joplin API token found. Enable the Web Clipper in Joplin (its token is read from the desktop settings), pass --joplin-api-token, or set JOPLIN_API_TOKEN. Run the `config` command to see what was detected.');
       process.exit(1);
     }
     if (token) {
@@ -53,6 +53,21 @@ yargs(hideBin(process.argv))
       console.log(formatTable(['id', 'title'], notes));
     } catch (error: unknown) {
       console.error('Error searching notes:', error instanceof Error ? error.message : String(error));
+    }
+  })
+  .command('config', 'Show the resolved configuration (base URL and API token)', (yargs) => {
+    return yargs.option('show', { type: 'boolean', default: false, describe: 'Reveal the full API token instead of masking it' });
+  }, (argv) => {
+    const cfg = resolveConfig(argv);
+    const tokenDisplay = cfg.token
+      ? (argv.show ? cfg.token : maskToken(cfg.token))
+      : '(not set)';
+    console.log(`Base URL:  ${cfg.baseUrl}  (${cfg.baseUrlSource})`);
+    console.log(`API token: ${tokenDisplay}  (${cfg.tokenSource})`);
+    if (cfg.tokenSource === 'none') {
+      console.log(`\nNo API token found. Enable the Web Clipper in Joplin (Tools > Options > Web Clipper);`);
+      console.log(`its token is then read automatically from ${desktopSettingsPath()}.`);
+      console.log(`You can also pass --joplin-api-token or set JOPLIN_API_TOKEN.`);
     }
   })
 
