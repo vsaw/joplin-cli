@@ -1,4 +1,4 @@
-import { formatTable, formatNote, formatNoteWithFrontMatter, formatNotebook, formatTag } from './formatting';
+import { formatTable, formatNote, formatNotebook, formatTag } from './formatting';
 import { Note } from '../commands/notes';
 import { Notebook } from '../commands/notebooks';
 import { Tag } from '../commands/tags';
@@ -60,13 +60,17 @@ describe('Formatting Utilities', () => {
     });
   });
 
-  describe('formatNoteWithFrontMatter', () => {
+  describe('formatNote with front matter', () => {
     const note: Note = {
       id: '1',
       title: 'Weekly Review',
       body: 'Body text here.',
       parent_id: ''
     };
+
+    it('should not emit front matter by default', () => {
+      expect(formatNote(note)).toBe('# Weekly Review\n\nBody text here.');
+    });
 
     it('should separate multiple tags with a comma', () => {
       const tags: Tag[] = [
@@ -80,7 +84,7 @@ tags: work, planning, q3
 ---
 
 Body text here.`;
-      expect(formatNoteWithFrontMatter(note, tags)).toBe(expected);
+      expect(formatNote(note, true, tags)).toBe(expected);
     });
 
     it('should omit the tags key when the note has no tags', () => {
@@ -89,7 +93,16 @@ title: Weekly Review
 ---
 
 Body text here.`;
-      expect(formatNoteWithFrontMatter(note, [])).toBe(expected);
+      expect(formatNote(note, true, [])).toBe(expected);
+    });
+
+    it('should omit the tags key when no tags are passed', () => {
+      const expected = `---
+title: Weekly Review
+---
+
+Body text here.`;
+      expect(formatNote(note, true)).toBe(expected);
     });
 
     it('should quote a title containing a colon', () => {
@@ -105,11 +118,11 @@ tags: work
 ---
 
 Body.`;
-      expect(formatNoteWithFrontMatter(tricky, [{ id: 't1', title: 'work' }])).toBe(expected);
+      expect(formatNote(tricky, true, [{ id: 't1', title: 'work' }])).toBe(expected);
     });
 
     it('should not inject a title heading into the body', () => {
-      const result = formatNoteWithFrontMatter(note, []);
+      const result = formatNote(note, true, []);
       expect(result).not.toContain('# Weekly Review');
     });
 
@@ -125,7 +138,7 @@ title: Weekly Review
 ---
 
 `;
-      expect(formatNoteWithFrontMatter(empty, [])).toBe(expected);
+      expect(formatNote(empty, true, [])).toBe(expected);
     });
   });
 

@@ -68,7 +68,7 @@ describe('Tag Commands', () => {
   });
 
   describe('searchTags', () => {
-    it('should call client.get with wildcard query by default', async () => {
+    it('should call client.get with a wildcard query', async () => {
       mockClient.get.mockResolvedValue({ items: [{ id: '1', title: 'Tag 1' }] });
 
       const result = await searchTags(mockClient, 'Tag 1');
@@ -76,20 +76,6 @@ describe('Tag Commands', () => {
       expect(mockClient.get).toHaveBeenCalledWith('/search', {
         params: {
           query: '*Tag 1*',
-          type: 'tag',
-        },
-      });
-      expect(result).toEqual([{ id: '1', title: 'Tag 1' }]);
-    });
-
-    it('should call client.get without wildcards when complex is true', async () => {
-      mockClient.get.mockResolvedValue({ items: [{ id: '1', title: 'Tag 1' }] });
-
-      const result = await searchTags(mockClient, 'title:Tag 1', true);
-
-      expect(mockClient.get).toHaveBeenCalledWith('/search', {
-        params: {
-          query: 'title:Tag 1',
           type: 'tag',
         },
       });

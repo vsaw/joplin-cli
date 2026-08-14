@@ -16,16 +16,16 @@ export function formatTable(headers: string[], rows: (Note | Notebook | Tag)[]):
   return `${headerRow}\n${separatorRow}\n${dataRows}`;
 }
 
-export function formatNote(note: Note): string {
+export function formatNote(note: Note, frontMatter: boolean = false, tags: Tag[] = []): string {
+  if (frontMatter) {
+    throw new Error('Not implemented');
+  }
+
   if(note.body && note.body.startsWith(`# ${note.title}`)) {
     return note.body;
   }
 
   return `# ${note.title}\n\n${note.body || ''}`;
-}
-
-export function formatNoteWithFrontMatter(note: Note, tags: Tag[]): string {
-  throw new Error('Not implemented');
 }
 
 export function formatNotebook(notebook: Notebook): string {

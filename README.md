@@ -154,10 +154,6 @@ $ joplin-cli notebook delete <id>
 # Search for all Tags containing "project" in the title
 $ joplin-cli tag search "project"
 
-# Search for all Tags with exact title "MyTag", created in the last two days
-# See Joplin Search Syntax for how to use complex queries.
-$ joplin-cli tag search "title:MyTag created:day-2" --complex
-
 # List all Tags
 $ joplin-cli tag list
 

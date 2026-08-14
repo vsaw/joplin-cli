@@ -27,7 +27,7 @@ export async function deleteTag(client: JoplinClient, id: string): Promise<void>
   throw new Error('Not implemented');
 }
 
-export async function searchTags(client: JoplinClient, query: string, complex: boolean = false): Promise<Tag[]> {
+export async function searchTags(client: JoplinClient, query: string): Promise<Tag[]> {
   throw new Error('Not implemented');
 }
 
