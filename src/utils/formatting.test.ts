@@ -58,6 +58,16 @@ describe('Formatting Utilities', () => {
       };
       expect(formatNote(note)).toBe('# My Note\n\n');
     });
+
+    it('should not duplicate the title when the body already starts with it', () => {
+      const note: Note = {
+        title: 'My Note',
+        body: '# My Note\n\nAlready has a heading.',
+        id: '',
+        parent_id: ''
+      };
+      expect(formatNote(note)).toBe('# My Note\n\nAlready has a heading.');
+    });
   });
 
   describe('formatNote with front matter', () => {

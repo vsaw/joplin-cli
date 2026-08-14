@@ -16,9 +16,24 @@ export function formatTable(headers: string[], rows: (Note | Notebook | Tag)[]):
   return `${headerRow}\n${separatorRow}\n${dataRows}`;
 }
 
+// Quotes a value only when leaving it bare would produce ambiguous YAML.
+function yamlScalar(value: string): string {
+  const needsQuoting = value === '' || value.trim() !== value || /[:#"']/.test(value);
+  if (!needsQuoting) {
+    return value;
+  }
+
+  return `"${value.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
+}
+
 export function formatNote(note: Note, frontMatter: boolean = false, tags: Tag[] = []): string {
   if (frontMatter) {
-    throw new Error('Not implemented');
+    const lines = [`title: ${yamlScalar(note.title)}`];
+    if (tags.length > 0) {
+      lines.push(`tags: ${yamlScalar(tags.map(tag => tag.title).join(', '))}`);
+    }
+
+    return `---\n${lines.join('\n')}\n---\n\n${note.body || ''}`;
   }
 
   if(note.body && note.body.startsWith(`# ${note.title}`)) {
@@ -33,5 +48,5 @@ export function formatNotebook(notebook: Notebook): string {
 }
 
 export function formatTag(tag: Tag): string {
-  throw new Error('Not implemented');
+  return `# ${tag.title}`;
 }

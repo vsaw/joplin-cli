@@ -8,41 +8,50 @@ export interface Tag {
 }
 
 export async function listTags(client: JoplinClient): Promise<Tag[]> {
-  throw new Error('Not implemented');
+  const result = await client.get<{ items: Tag[] }>('/tags');
+  return result.items;
 }
 
 export async function getTag(client: JoplinClient, id: string): Promise<Tag> {
-  throw new Error('Not implemented');
+  return client.get<Tag>(`/tags/${id}`);
 }
 
 export async function createTag(client: JoplinClient, title: string): Promise<Tag> {
-  throw new Error('Not implemented');
+  return client.post<Tag>('/tags', { title });
 }
 
 export async function updateTag(client: JoplinClient, id: string, title: string): Promise<Tag> {
-  throw new Error('Not implemented');
+  return client.put<Tag>(`/tags/${id}`, { title });
 }
 
 export async function deleteTag(client: JoplinClient, id: string): Promise<void> {
-  throw new Error('Not implemented');
+  await client.delete(`/tags/${id}`);
 }
 
 export async function searchTags(client: JoplinClient, query: string): Promise<Tag[]> {
-  throw new Error('Not implemented');
+  const result = await client.get<{ items: Tag[] }>('/search', {
+    params: {
+      query: `*${query}*`,
+      type: 'tag',
+    },
+  });
+  return result.items;
 }
 
 export async function listTagNotes(client: JoplinClient, tagId: string): Promise<Note[]> {
-  throw new Error('Not implemented');
+  const result = await client.get<{ items: Note[] }>(`/tags/${tagId}/notes`);
+  return result.items;
 }
 
 export async function listNoteTags(client: JoplinClient, noteId: string): Promise<Tag[]> {
-  throw new Error('Not implemented');
+  const result = await client.get<{ items: Tag[] }>(`/notes/${noteId}/tags`);
+  return result.items;
 }
 
 export async function addTagToNote(client: JoplinClient, tagId: string, noteId: string): Promise<void> {
-  throw new Error('Not implemented');
+  await client.post(`/tags/${tagId}/notes`, { id: noteId });
 }
 
 export async function removeTagFromNote(client: JoplinClient, tagId: string, noteId: string): Promise<void> {
-  throw new Error('Not implemented');
+  await client.delete(`/tags/${tagId}/notes/${noteId}`);
 }
