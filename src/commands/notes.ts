@@ -1,10 +1,12 @@
 import { JoplinClient } from '../api/client';
+import { Tag } from './tags';
 
 export interface Note {
   id: string;
   title: string;
   body: string;
   parent_id: string;
+  tags?: Tag[];
   [key: string]: unknown;
 }
 
@@ -15,11 +17,15 @@ export async function listNotes(client: JoplinClient, notebookId?: string): Prom
 }
 
 export async function getNote(client: JoplinClient, id: string): Promise<Note> {
-  return client.get<Note>(`/notes/${id}`, {
-    params: {
-      fields: ['id', 'title', 'body', 'parent_id', 'created_time', 'updated_time'].join(','),
-    }
-  });
+  const [note, tags] = await Promise.all([
+    client.get<Note>(`/notes/${id}`, {
+      params: {
+        fields: ['id', 'title', 'body', 'parent_id', 'created_time', 'updated_time'].join(','),
+      }
+    }),
+    getNoteTags(client, id),
+  ]);
+  return { ...note, tags };
 }
 
 export async function createNote(client: JoplinClient, title: string, body: string, notebookId: string): Promise<Note> {
@@ -45,5 +51,10 @@ export async function searchNotes(client: JoplinClient, query: string, complex: 
       query: `type:note ${searchQuery}`,
     },
   });
+  return result.items;
+}
+
+export async function getNoteTags(client: JoplinClient, noteId: string): Promise<Tag[]> {
+  const result = await client.get<{ items: Tag[] }>(`/notes/${noteId}/tags`);
   return result.items;
 }

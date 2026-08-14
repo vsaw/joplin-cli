@@ -1,4 +1,4 @@
-import { listNotes, getNote, createNote, updateNote, deleteNote, searchNotes } from './notes';
+import { listNotes, getNote, createNote, updateNote, deleteNote, searchNotes, getNoteTags } from './notes';
 import { JoplinClient } from '../api/client';
 
 // Mock the JoplinClient
@@ -34,14 +34,40 @@ describe('Note Commands', () => {
   });
 
   describe('getNote', () => {
-    it('should call client.get with /notes/:id', async () => {
-      mockClient.get.mockResolvedValue({ id: '1', title: 'Note 1', body: 'Body' });
+    it('should call client.get with /notes/:id and merge in the note\'s tags', async () => {
+      mockClient.get.mockImplementation((url: string) => {
+        if (url === '/notes/1') {
+          return Promise.resolve({ id: '1', title: 'Note 1', body: 'Body' });
+        }
+        if (url === '/notes/1/tags') {
+          return Promise.resolve({ items: [{ id: 't1', title: 'work' }] });
+        }
+        throw new Error(`Unexpected URL: ${url}`);
+      });
 
       const result = await getNote(mockClient, '1');
 
       expect(mockClient.get).toHaveBeenCalledWith('/notes/1', { params: { fields: 'id,title,body,parent_id,created_time,updated_time' } });
-      expect(result).toEqual({ id: '1', title: 'Note 1', body: 'Body' });
-      });  });
+      expect(mockClient.get).toHaveBeenCalledWith('/notes/1/tags');
+      expect(result).toEqual({ id: '1', title: 'Note 1', body: 'Body', tags: [{ id: 't1', title: 'work' }] });
+    });
+
+    it('should return an empty tags array when the note has no tags', async () => {
+      mockClient.get.mockImplementation((url: string) => {
+        if (url === '/notes/1') {
+          return Promise.resolve({ id: '1', title: 'Note 1', body: 'Body' });
+        }
+        if (url === '/notes/1/tags') {
+          return Promise.resolve({ items: [] });
+        }
+        throw new Error(`Unexpected URL: ${url}`);
+      });
+
+      const result = await getNote(mockClient, '1');
+
+      expect(result).toEqual({ id: '1', title: 'Note 1', body: 'Body', tags: [] });
+    });
+  });
 
   describe('createNote', () => {
     it('should call client.post with /notes and correct data', async () => {
@@ -104,6 +130,17 @@ describe('Note Commands', () => {
         },
       });
       expect(result).toEqual([{ id: '1', title: 'Note 1' }]);
+    });
+  });
+
+  describe('getNoteTags', () => {
+    it('should call client.get with /notes/:id/tags', async () => {
+      mockClient.get.mockResolvedValue({ items: [{ id: '1', title: 'Tag 1' }] });
+
+      const result = await getNoteTags(mockClient, 'note-123');
+
+      expect(mockClient.get).toHaveBeenCalledWith('/notes/note-123/tags');
+      expect(result).toEqual([{ id: '1', title: 'Tag 1' }]);
     });
   });
 });

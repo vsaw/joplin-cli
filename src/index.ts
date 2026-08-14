@@ -3,8 +3,9 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { JoplinClient } from './api/client';
 import { listNotebooks, getNotebook, createNotebook, updateNotebook, deleteNotebook, searchNotebooks } from './commands/notebooks';
-import { listNotes, getNote, createNote, updateNote, deleteNote, searchNotes } from './commands/notes';
-import { formatTable, formatNote, formatNotebook } from './utils/formatting';
+import { listNotes, getNote, createNote, updateNote, deleteNote, searchNotes, getNoteTags } from './commands/notes';
+import { listTags, getTag, createTag, updateTag, deleteTag, searchTags, listTagNotes, addTagToNote, removeTagFromNote } from './commands/tags';
+import { formatTable, formatNote, formatNotebook, formatTag } from './utils/formatting';
 import { resolveConfig, maskToken, desktopSettingsPath } from './utils/config';
 import * as dotenv from 'dotenv';
 
@@ -178,11 +179,13 @@ yargs(hideBin(process.argv))
         }
       })
       .command('get <id>', 'Get a note', (yargs) => {
-        return yargs.positional('id', { type: 'string', describe: 'Note ID' });
+        return yargs
+          .positional('id', { type: 'string', describe: 'Note ID' })
+          .option('front-matter', { type: 'boolean', default: false, describe: 'Prepend YAML front matter with title and tags' });
       }, async (argv) => {
         try {
           const note = await getNote(client, argv.id as string);
-          console.log(formatNote(note));
+          console.log(formatNote(note, argv.frontMatter as boolean));
         } catch (error: unknown) {
           console.error(`Error getting note ${argv.id}:`, error instanceof Error ? error.message : String(error));
         }
@@ -242,6 +245,135 @@ yargs(hideBin(process.argv))
           console.log(`Note ${argv.id} deleted.`);
         } catch (error: unknown) {
           console.error(`Error deleting note ${argv.id}:`, error instanceof Error ? error.message : String(error));
+        }
+      })
+      .command('tags <id>', 'List the tags of a note', (yargs) => {
+        return yargs.positional('id', { type: 'string', describe: 'Note ID' });
+      }, async (argv) => {
+        try {
+          const tags = await getNoteTags(client, argv.id as string);
+          console.log(formatTable(['id', 'title'], tags));
+        } catch (error: unknown) {
+          console.error(`Error listing tags of note ${argv.id}:`, error instanceof Error ? error.message : String(error));
+        }
+      })
+      .command('tag <id>', 'Add a tag to a note', (yargs) => {
+        return yargs
+          .positional('id', { type: 'string', describe: 'Note ID' })
+          .option('tag', { type: 'string', demandOption: true, describe: 'Tag ID' });
+      }, async (argv) => {
+        if (argv.sandbox) {
+          console.log('[SANDBOX] Skip tagging note:', argv.id);
+          return;
+        }
+        try {
+          await addTagToNote(client, argv.tag as string, argv.id as string);
+          console.log(`Tag ${argv.tag} added to note ${argv.id}.`);
+        } catch (error: unknown) {
+          console.error(`Error adding tag ${argv.tag} to note ${argv.id}:`, error instanceof Error ? error.message : String(error));
+        }
+      })
+      .command('untag <id>', 'Remove a tag from a note', (yargs) => {
+        return yargs
+          .positional('id', { type: 'string', describe: 'Note ID' })
+          .option('tag', { type: 'string', demandOption: true, describe: 'Tag ID' });
+      }, async (argv) => {
+        if (argv.sandbox) {
+          console.log('[SANDBOX] Skip untagging note:', argv.id);
+          return;
+        }
+        try {
+          await removeTagFromNote(client, argv.tag as string, argv.id as string);
+          console.log(`Tag ${argv.tag} removed from note ${argv.id}.`);
+        } catch (error: unknown) {
+          console.error(`Error removing tag ${argv.tag} from note ${argv.id}:`, error instanceof Error ? error.message : String(error));
+        }
+      });
+  })
+
+  // Tag Commands
+  .command('tag <command>', 'Manage tags', (yargs) => {
+    return yargs
+      .command('list', 'List all tags', {}, async () => {
+        try {
+          const tags = await listTags(client);
+          console.log(formatTable(['id', 'title'], tags));
+        } catch (error: unknown) {
+          console.error('Error listing tags:', error instanceof Error ? error.message : String(error));
+        }
+      })
+      .command('search <query>', 'Search for tags by title', (yargs) => {
+        return yargs.positional('query', { type: 'string', describe: 'Search query' });
+      }, async (argv) => {
+        try {
+          const tags = await searchTags(client, argv.query as string);
+          console.log(formatTable(['id', 'title'], tags));
+        } catch (error: unknown) {
+          console.error('Error searching tags:', error instanceof Error ? error.message : String(error));
+        }
+      })
+      .command('get <id>', 'Get a tag', (yargs) => {
+        return yargs.positional('id', { type: 'string', describe: 'Tag ID' });
+      }, async (argv) => {
+        try {
+          const tag = await getTag(client, argv.id as string);
+          console.log(formatTag(tag));
+        } catch (error: unknown) {
+          console.error(`Error getting tag ${argv.id}:`, error instanceof Error ? error.message : String(error));
+        }
+      })
+      .command('notes <id>', 'List the notes carrying a tag', (yargs) => {
+        return yargs.positional('id', { type: 'string', describe: 'Tag ID' });
+      }, async (argv) => {
+        try {
+          const notes = await listTagNotes(client, argv.id as string);
+          console.log(formatTable(['id', 'title'], notes));
+        } catch (error: unknown) {
+          console.error(`Error listing notes of tag ${argv.id}:`, error instanceof Error ? error.message : String(error));
+        }
+      })
+      .command('create <title>', 'Create a tag', (yargs) => {
+        return yargs.positional('title', { type: 'string', describe: 'Tag title' });
+      }, async (argv) => {
+        if (argv.sandbox) {
+          console.log('[SANDBOX] Skip tag creation:', argv.title);
+          return;
+        }
+        try {
+          const tag = await createTag(client, argv.title as string);
+          console.log('Tag created:', tag.id);
+        } catch (error: unknown) {
+          console.error('Error creating tag:', error instanceof Error ? error.message : String(error));
+        }
+      })
+      .command('update <id>', 'Update a tag', (yargs) => {
+        return yargs
+          .positional('id', { type: 'string', describe: 'Tag ID' })
+          .option('title', { type: 'string', demandOption: true, describe: 'New title' });
+      }, async (argv) => {
+        if (argv.sandbox) {
+          console.log('[SANDBOX] Skip tag update:', argv.id);
+          return;
+        }
+        try {
+          const tag = await updateTag(client, argv.id as string, argv.title as string);
+          console.log('Tag updated:', tag.id);
+        } catch (error: unknown) {
+          console.error(`Error updating tag ${argv.id}:`, error instanceof Error ? error.message : String(error));
+        }
+      })
+      .command('delete <id>', 'Delete a tag', (yargs) => {
+        return yargs.positional('id', { type: 'string', describe: 'Tag ID' });
+      }, async (argv) => {
+        if (argv.sandbox) {
+          console.log('[SANDBOX] Skip tag deletion:', argv.id);
+          return;
+        }
+        try {
+          await deleteTag(client, argv.id as string);
+          console.log(`Tag ${argv.id} deleted.`);
+        } catch (error: unknown) {
+          console.error(`Error deleting tag ${argv.id}:`, error instanceof Error ? error.message : String(error));
         }
       });
   })

@@ -84,7 +84,8 @@ $ joplin-cli note search "title:MyNote created:day-2" --complex
 $ joplin-cli note list [--notebook <Notebook ID>]
 
 # Get Note content
-$ joplin-cli note get <ID>
+# Add --front-matter to prepend YAML front matter with the title and tags.
+$ joplin-cli note get <ID> [--front-matter]
 
 # Create a new Note in specified Notebook
 # If Body is ommited, an empty note will be created.
@@ -96,7 +97,33 @@ $ joplin-cli note update [--title <New Title>] [--body <New Body>]
 
 # Delete a note
 $ joplin-cli note delete <id>
+
+# List all Tags of a Note
+$ joplin-cli note tags <ID>
+
+# Add a Tag to a Note
+$ joplin-cli note tag <ID> --tag <Tag ID>
+
+# Remove a Tag from a Note
+# This only detaches the Tag, it is not deleted.
+$ joplin-cli note untag <ID> --tag <Tag ID>
 ```
+
+By default `note get` prints the note as Markdown without front matter, and tags are not
+included. Pass `--front-matter` to prepend a YAML block with the title and the note's
+tags, separated by `, `:
+
+```bash
+$ joplin-cli note get <ID> --front-matter
+---
+title: Weekly Review
+tags: work, planning, q3
+---
+
+Body text here.
+```
+
+Notes without tags omit the `tags` key. Titles containing `:`, `#`, `"` or `'` are quoted.
 
 ### Working with Notebooks
 
@@ -119,6 +146,32 @@ $ joplin-cli notebook update <id> --title <New Title>
 
 # Delete a Notebook and all Notes it contains
 $ joplin-cli notebook delete <id>
+```
+
+### Working with Tags
+
+```bash
+# Search for all Tags containing "project" in the title
+$ joplin-cli tag search "project"
+
+# List all Tags
+$ joplin-cli tag list
+
+# Get a Tag
+$ joplin-cli tag get <ID>
+
+# List all Notes carrying a Tag
+$ joplin-cli tag notes <ID>
+
+# Create a new Tag
+$ joplin-cli tag create "My Tag"
+
+# Update a Tag Title
+$ joplin-cli tag update <ID> --title <New Title>
+
+# Delete a Tag
+# The Notes it was applied to are kept, they simply lose the Tag.
+$ joplin-cli tag delete <ID>
 ```
 
 ### Troubleshooting
