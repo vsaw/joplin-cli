@@ -1,4 +1,4 @@
-import { listTags, getTag, createTag, updateTag, deleteTag, searchTags, listTagNotes, listNoteTags, addTagToNote, removeTagFromNote } from './tags';
+import { listTags, getTag, createTag, updateTag, deleteTag, searchTags, listTagNotes, addTagToNote, removeTagFromNote } from './tags';
 import { JoplinClient } from '../api/client';
 
 // Mock the JoplinClient
@@ -91,17 +91,6 @@ describe('Tag Commands', () => {
 
       expect(mockClient.get).toHaveBeenCalledWith('/tags/tag-123/notes');
       expect(result).toEqual([{ id: '1', title: 'Note 1' }]);
-    });
-  });
-
-  describe('listNoteTags', () => {
-    it('should call client.get with /notes/:id/tags', async () => {
-      mockClient.get.mockResolvedValue({ items: [{ id: '1', title: 'Tag 1' }] });
-
-      const result = await listNoteTags(mockClient, 'note-123');
-
-      expect(mockClient.get).toHaveBeenCalledWith('/notes/note-123/tags');
-      expect(result).toEqual([{ id: '1', title: 'Tag 1' }]);
     });
   });
 

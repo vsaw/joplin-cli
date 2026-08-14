@@ -1,4 +1,4 @@
-import { listNotes, getNote, createNote, updateNote, deleteNote, searchNotes } from './notes';
+import { listNotes, getNote, createNote, updateNote, deleteNote, searchNotes, getNoteTags } from './notes';
 import { JoplinClient } from '../api/client';
 
 // Mock the JoplinClient
@@ -130,6 +130,17 @@ describe('Note Commands', () => {
         },
       });
       expect(result).toEqual([{ id: '1', title: 'Note 1' }]);
+    });
+  });
+
+  describe('getNoteTags', () => {
+    it('should call client.get with /notes/:id/tags', async () => {
+      mockClient.get.mockResolvedValue({ items: [{ id: '1', title: 'Tag 1' }] });
+
+      const result = await getNoteTags(mockClient, 'note-123');
+
+      expect(mockClient.get).toHaveBeenCalledWith('/notes/note-123/tags');
+      expect(result).toEqual([{ id: '1', title: 'Tag 1' }]);
     });
   });
 });

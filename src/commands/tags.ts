@@ -43,11 +43,6 @@ export async function listTagNotes(client: JoplinClient, tagId: string): Promise
   return result.items;
 }
 
-export async function listNoteTags(client: JoplinClient, noteId: string): Promise<Tag[]> {
-  const result = await client.get<{ items: Tag[] }>(`/notes/${noteId}/tags`);
-  return result.items;
-}
-
 export async function addTagToNote(client: JoplinClient, tagId: string, noteId: string): Promise<void> {
   await client.post(`/tags/${tagId}/notes`, { id: noteId });
 }

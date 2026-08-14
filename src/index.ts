@@ -3,8 +3,8 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { JoplinClient } from './api/client';
 import { listNotebooks, getNotebook, createNotebook, updateNotebook, deleteNotebook, searchNotebooks } from './commands/notebooks';
-import { listNotes, getNote, createNote, updateNote, deleteNote, searchNotes } from './commands/notes';
-import { listTags, getTag, createTag, updateTag, deleteTag, searchTags, listTagNotes, listNoteTags, addTagToNote, removeTagFromNote } from './commands/tags';
+import { listNotes, getNote, createNote, updateNote, deleteNote, searchNotes, getNoteTags } from './commands/notes';
+import { listTags, getTag, createTag, updateTag, deleteTag, searchTags, listTagNotes, addTagToNote, removeTagFromNote } from './commands/tags';
 import { formatTable, formatNote, formatNotebook, formatTag } from './utils/formatting';
 import { resolveConfig, maskToken, desktopSettingsPath } from './utils/config';
 import * as dotenv from 'dotenv';
@@ -251,7 +251,7 @@ yargs(hideBin(process.argv))
         return yargs.positional('id', { type: 'string', describe: 'Note ID' });
       }, async (argv) => {
         try {
-          const tags = await listNoteTags(client, argv.id as string);
+          const tags = await getNoteTags(client, argv.id as string);
           console.log(formatTable(['id', 'title'], tags));
         } catch (error: unknown) {
           console.error(`Error listing tags of note ${argv.id}:`, error instanceof Error ? error.message : String(error));
