@@ -185,12 +185,7 @@ yargs(hideBin(process.argv))
       }, async (argv) => {
         try {
           const note = await getNote(client, argv.id as string);
-          if (argv.frontMatter) {
-            const tags = await listNoteTags(client, argv.id as string);
-            console.log(formatNote(note, true, tags));
-            return;
-          }
-          console.log(formatNote(note));
+          console.log(formatNote(note, argv.frontMatter as boolean));
         } catch (error: unknown) {
           console.error(`Error getting note ${argv.id}:`, error instanceof Error ? error.message : String(error));
         }

@@ -94,7 +94,7 @@ tags: work, planning, q3
 ---
 
 Body text here.`;
-      expect(formatNote(note, true, tags)).toBe(expected);
+      expect(formatNote({ ...note, tags }, true)).toBe(expected);
     });
 
     it('should omit the tags key when the note has no tags', () => {
@@ -103,10 +103,10 @@ title: Weekly Review
 ---
 
 Body text here.`;
-      expect(formatNote(note, true, [])).toBe(expected);
+      expect(formatNote({ ...note, tags: [] }, true)).toBe(expected);
     });
 
-    it('should omit the tags key when no tags are passed', () => {
+    it('should omit the tags key when the note has no tags field at all', () => {
       const expected = `---
 title: Weekly Review
 ---
@@ -120,7 +120,8 @@ Body text here.`;
         id: '1',
         title: 'Meeting: Q3 planning',
         body: 'Body.',
-        parent_id: ''
+        parent_id: '',
+        tags: [{ id: 't1', title: 'work' }],
       };
       const expected = `---
 title: "Meeting: Q3 planning"
@@ -128,11 +129,11 @@ tags: work
 ---
 
 Body.`;
-      expect(formatNote(tricky, true, [{ id: 't1', title: 'work' }])).toBe(expected);
+      expect(formatNote(tricky, true)).toBe(expected);
     });
 
     it('should not inject a title heading into the body', () => {
-      const result = formatNote(note, true, []);
+      const result = formatNote({ ...note, tags: [] }, true);
       expect(result).not.toContain('# Weekly Review');
     });
 
@@ -148,7 +149,7 @@ title: Weekly Review
 ---
 
 `;
-      expect(formatNote(empty, true, [])).toBe(expected);
+      expect(formatNote(empty, true)).toBe(expected);
     });
   });
 

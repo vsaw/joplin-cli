@@ -26,8 +26,9 @@ function yamlScalar(value: string): string {
   return `"${value.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
 }
 
-export function formatNote(note: Note, frontMatter: boolean = false, tags: Tag[] = []): string {
+export function formatNote(note: Note, frontMatter: boolean = false): string {
   if (frontMatter) {
+    const tags = note.tags || [];
     const lines = [`title: ${yamlScalar(note.title)}`];
     if (tags.length > 0) {
       lines.push(`tags: ${yamlScalar(tags.map(tag => tag.title).join(', '))}`);
