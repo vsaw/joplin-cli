@@ -49,12 +49,15 @@ jobs:
       - name: Publish coverage summary
         if: always()
         run: |
+          set -o pipefail
           if [ ! -f coverage/coverage-summary.json ]; then
+            echo "::warning::coverage/coverage-summary.json not found - no coverage summary published"
+            ls -la coverage 2>/dev/null || echo "(no coverage directory)"
             echo "No coverage summary produced." >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
           {
-            echo "### Coverage — Node ${{ matrix.node-version }}"
+            echo "### Coverage - Node ${{ matrix.node-version }}"
             echo ""
             echo "| Metric | % | Covered / Total |"
             echo "| --- | ---: | ---: |"
@@ -65,4 +68,4 @@ jobs:
                 console.log(`| ${k} | ${m.pct}% | ${m.covered} / ${m.total} |`);
               }
             '
-          } >> "$GITHUB_STEP_SUMMARY"
+          } | tee -a "$GITHUB_STEP_SUMMARY"
