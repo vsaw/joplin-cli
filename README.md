@@ -29,11 +29,15 @@ npm install -g github:vsaw/joplin-cli
 
 ## Configuration
 
-The following configuration options are evailable
+`joplin-cli` tries to automatically detect your Joplin Desktop instance, by reading the
+API token from Joplin's own settings file (macOS/Linux only).
+
+If that doesn't work, or you want to point it at a specific Joplin instance, here are
+the flags and environment variables:
 
 | NAME | REQUIRED | DESCRIPTION |
 |--|--|--|
-| `JOPLIN_API_TOKEN`<br><br>`--joplin-api-token` | No, see below | The token to connect to the Webclipper API. You can obtain it in the Joplin App settings. For more information see the [Joplin Documentation](https://joplinapp.org/help/api/references/rest_api#authorisation). |
+| `JOPLIN_API_TOKEN`<br><br>`--joplin-api-token` | No, see above | The token to connect to the Webclipper API. You can obtain it in the Joplin App settings. For more information see the [Joplin Documentation](https://joplinapp.org/help/api/references/rest_api#authorisation). |
 | `JOPLIN_BASE_URL`<br><br>`--joplin-base-url` | No | If not provided http://localhost:41184 will be used as default value. |
 
 The configuration values can be passed via the CLI interface or as environmental variables
@@ -52,50 +56,15 @@ Alternatively you can set it via an `.env` file
 JOPLIN_API_TOKEN=your_token_here
 ```
 
-### Auto-detected token
-
-If you have the Joplin desktop app installed on macOS or Linux with the Web Clipper
-enabled, you don't need to set `JOPLIN_API_TOKEN` at all: `joplin-cli` reads the token
-straight out of the desktop app's own settings file
-(`~/.config/joplin-desktop/settings.json`).
-
-The token is resolved in this order, first match wins:
-
-1. `--joplin-api-token` flag
-2. `JOPLIN_API_TOKEN` environment variable
-3. Auto-detected from the Joplin desktop app's settings
-
-The base URL is resolved the same way, minus the auto-detection step:
-
-1. `--joplin-base-url` flag
-2. `JOPLIN_BASE_URL` environment variable
-3. `http://localhost:41184` (default)
-
-Note: the auto-detected settings file path assumes a Linux/macOS-style config directory
-(`~/.config/...`) and is not currently looked up on Windows; Windows users should set
-`JOPLIN_API_TOKEN` explicitly.
-
-Run `joplin-cli config` at any time to see what was actually resolved, and where each
-value came from. `--show` reveals the full token instead of masking it; by default only
-the first and last 4 characters are shown.
+You can check the configuration like this:
 
 ```bash
 $ joplin-cli config
 Base URL:  http://localhost:41184  (default)
 API token: desk**************7890  (joplin-desktop)
-
-$ joplin-cli config --show
-Base URL:  http://localhost:41184  (default)
-API token: desktoptoken1234567890  (joplin-desktop)
-
-$ joplin-cli config
-Base URL:  http://localhost:41184  (default)
-API token: (not set)  (none)
-
-No API token found. Enable the Web Clipper in Joplin (Tools > Options > Web Clipper);
-its token is then read automatically from ~/.config/joplin-desktop/settings.json.
-You can also pass --joplin-api-token or set JOPLIN_API_TOKEN.
 ```
+
+Add `--show` to reveal the full token instead of masking it.
 
 ## Usage
 
