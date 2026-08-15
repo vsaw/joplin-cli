@@ -29,11 +29,15 @@ npm install -g github:vsaw/joplin-cli
 
 ## Configuration
 
-The following configuration options are evailable
+`joplin-cli` tries to automatically detect your Joplin Desktop instance, by reading the
+API token from Joplin's own settings file (macOS/Linux only).
+
+If that doesn't work, or you want to point it at a specific Joplin instance, here are
+the flags and environment variables:
 
 | NAME | REQUIRED | DESCRIPTION |
 |--|--|--|
-| `JOPLIN_API_TOKEN`<br><br>`--joplin-api-token` | Yes | The required token to connect to the Webclipper API. You can obtain it in the Joplin App settings. For more information see the [Joplin Documentation](https://joplinapp.org/help/api/references/rest_api#authorisation). |
+| `JOPLIN_API_TOKEN`<br><br>`--joplin-api-token` | No, see above | The token to connect to the Webclipper API. You can obtain it in the Joplin App settings. For more information see the [Joplin Documentation](https://joplinapp.org/help/api/references/rest_api#authorisation). |
 | `JOPLIN_BASE_URL`<br><br>`--joplin-base-url` | No | If not provided http://localhost:41184 will be used as default value. |
 
 The configuration values can be passed via the CLI interface or as environmental variables
@@ -51,6 +55,16 @@ Alternatively you can set it via an `.env` file
 ```env
 JOPLIN_API_TOKEN=your_token_here
 ```
+
+You can check the configuration like this:
+
+```bash
+$ joplin-cli config
+Base URL:  http://localhost:41184  (default)
+API token: desk**************7890  (joplin-desktop)
+```
+
+Add `--show` to reveal the full token instead of masking it.
 
 ## Usage
 
